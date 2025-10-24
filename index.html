@@ -38,6 +38,26 @@ canvas { background: #0a0e16; border: 1px solid #223047; border-radius: 12px; bo
       <p>
         <span class="kbd">Space</span> start/pause • <span class="kbd">R</span> reset
       </p>
+      <p>
+        Ball:
+        <select id="ballStyle" class="btn" aria-label="Select ball appearance">
+          <option value="">Classic</option>
+          <option>🐶</option>
+          <option>🐱</option>
+          <option>🐭</option>
+          <option>🐹</option>
+          <option>🐰</option>
+          <option>🐻</option>
+          <option>🐼</option>
+          <option>🐨</option>
+          <option>🐯</option>
+          <option>🦊</option>
+          <option>🐸</option>
+          <option>🐵</option>
+          <option>🐧</option>
+          <option>🐢</option>
+        </select>
+      </p>
       <p style="margin-top:12px"><button class="btn" id="btnStart">Start</button></p>
     </div>
   </div>
@@ -52,6 +72,7 @@ canvas { background: #0a0e16; border: 1px solid #223047; border-radius: 12px; bo
   const btnReset = document.getElementById('btnReset');
   const scoreLeftEl = document.getElementById('scoreLeft');
   const scoreRightEl = document.getElementById('scoreRight');
+  const ballStyleSelect = document.getElementById('ballStyle');
 
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
@@ -71,6 +92,7 @@ canvas { background: #0a0e16; border: 1px solid #223047; border-radius: 12px; bo
   const leftPaddle = { x: PADDLE_MARGIN, y: (HEIGHT-PADDLE_HEIGHT)/2, vy: 0 };
   const rightPaddle = { x: WIDTH - PADDLE_MARGIN - PADDLE_WIDTH, y: (HEIGHT-PADDLE_HEIGHT)/2, vy: 0 };
   const ball = { x: WIDTH/2, y: HEIGHT/2, vx: BALL_START_SPEED, vy: BALL_START_SPEED * 0.3, speed: BALL_START_SPEED };
+  let ballEmoji = '';
 
   let scoreLeft = 0, scoreRight = 0;
   let running = false;
@@ -106,7 +128,15 @@ canvas { background: #0a0e16; border: 1px solid #223047; border-radius: 12px; bo
     ctx.fillRect(leftPaddle.x, leftPaddle.y, PADDLE_WIDTH, PADDLE_HEIGHT);
     ctx.fillRect(rightPaddle.x, rightPaddle.y, PADDLE_WIDTH, PADDLE_HEIGHT);
     // ball
-    ctx.fillRect(ball.x, ball.y, BALL_SIZE, BALL_SIZE);
+    if(ballEmoji){
+      const fontSize = Math.floor(BALL_SIZE * 2);
+      ctx.font = `${fontSize}px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ballEmoji, ball.x + BALL_SIZE/2, ball.y + BALL_SIZE/2);
+    }else{
+      ctx.fillRect(ball.x, ball.y, BALL_SIZE, BALL_SIZE);
+    }
   }
 
   function update(){
@@ -242,6 +272,14 @@ canvas { background: #0a0e16; border: 1px solid #223047; border-radius: 12px; bo
   btnStart.addEventListener('click', startGame);
   btnPause.addEventListener('click', togglePause);
   btnReset.addEventListener('click', resetGame);
+
+  // Ball appearance selector
+  if(ballStyleSelect){
+    ballStyleSelect.addEventListener('change', ()=>{
+      ballEmoji = ballStyleSelect.value;
+      draw();
+    });
+  }
 
   // Init
   resetGame();
